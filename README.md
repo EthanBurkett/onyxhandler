@@ -207,3 +207,12 @@ export default {
   }
 } as lang
 ```
+
+## Soon To Be Added
+
+These are features that we as a developer team have planned for this package
+
+- Website with discord authentication to skip the hassle of setting it up
+- Potentially added client control from the premade dashboard (maybe)
+- More features to bring to your bot
+- More default commands
