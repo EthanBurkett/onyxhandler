@@ -34,6 +34,8 @@ import {
   CommandInteractionOptionResolver,
 } from "discord.js";
 
+export default function Onyx(opts: ISettings);
+
 export interface Onyx {
   client: () => Client;
   commands: () => Collection<string, Command>;
