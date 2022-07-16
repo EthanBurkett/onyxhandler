@@ -9,7 +9,7 @@ import {
   TextBasedChannel,
   TextChannel,
 } from "discord.js";
-import { Command, IErrors, lang } from "../typings";
+import { Command, IErrors, lang } from "../index.d";
 import {
   Commands,
   Console,

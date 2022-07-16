@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import chalk from "chalk";
 import { promisify } from "util";
-import { Command, lang } from "./typings";
+import { Command, lang } from "./index.d";
 import { glob } from "glob";
 import path from "path";
 import Prefix from "./entity/Prefixes";
