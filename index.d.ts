@@ -1,7 +1,6 @@
 import {
   ApplicationFlags,
   BaseClientEvents,
-  Client,
   ClientEvents,
   IntentsString,
   TextBasedChannel,
@@ -30,11 +29,10 @@ import {
   CommandInteraction,
   CacheType,
   CommandInteractionOption,
-  APIInteractionGuildMember,
   CommandInteractionOptionResolver,
 } from "discord.js";
 
-export default interface Onyx {
+export interface Onyx {
   client: () => Client;
   commands: () => Collection<string, Command>;
   events: () => Collection<string, Function>;
@@ -124,5 +122,5 @@ export interface ICallbackOptions {
     | ThreadChannel
     | null
     | TextBasedChannel;
-  member: GuildMember | APIInteractionGuildMember;
+  member: GuildMember;
 }

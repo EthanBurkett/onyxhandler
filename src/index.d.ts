@@ -34,7 +34,7 @@ import {
   CommandInteractionOptionResolver,
 } from "discord.js";
 
-export default interface Onyx {
+export interface Onyx {
   client: () => Client;
   commands: () => Collection<string, Command>;
   events: () => Collection<string, Function>;

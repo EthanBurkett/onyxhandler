@@ -1,4 +1,4 @@
-import Onyx, { ISettings, lang } from "./index.d";
+import { Onyx, ISettings, lang } from "./index.d";
 import {
   CachePrefixes,
   Commands,
