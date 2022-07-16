@@ -79,6 +79,10 @@ export default {
     } else {
       await Prefix.insert({ guildId, prefix });
     }
-    return PrivateSettings.lang?.success.prefixChanged;
+    const resultFuncExists = PrivateSettings.lang?.success.prefixChanged;
+    if (!resultFuncExists) return;
+    const result = PrivateSettings.lang?.success.prefixChanged!(prefix);
+    if (!result) return;
+    return result;
   },
 } as Command;

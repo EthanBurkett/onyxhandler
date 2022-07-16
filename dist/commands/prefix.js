@@ -20,7 +20,7 @@ exports.default = {
     expectedArgs: "[prefix]",
     maxArgs: 1,
     async run({ client, interaction, message, args }) {
-        var _a;
+        var _a, _b;
         let prefix;
         let guildExists;
         let guildId;
@@ -77,7 +77,13 @@ exports.default = {
         else {
             await Prefixes_1.default.insert({ guildId, prefix });
         }
-        return (_a = utils_1.PrivateSettings.lang) === null || _a === void 0 ? void 0 : _a.success.prefixChanged;
+        const resultFuncExists = (_a = utils_1.PrivateSettings.lang) === null || _a === void 0 ? void 0 : _a.success.prefixChanged;
+        if (!resultFuncExists)
+            return;
+        const result = (_b = utils_1.PrivateSettings.lang) === null || _b === void 0 ? void 0 : _b.success.prefixChanged(prefix);
+        if (!result)
+            return;
+        return result;
     },
 };
 //# sourceMappingURL=prefix.js.map
