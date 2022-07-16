@@ -20,6 +20,7 @@ exports.default = {
     expectedArgs: "[prefix]",
     maxArgs: 1,
     async run({ client, interaction, message, args }) {
+        var _a;
         let prefix;
         let guildExists;
         let guildId;
@@ -72,12 +73,11 @@ exports.default = {
         utils_1.Cache.prefixes.set(guildId, prefix);
         if (guildExists) {
             await Prefixes_1.default.update({ guildId }, { prefix });
-            return utils_1.Responses.embeds.Success(`Updated prefix to ${prefix}`);
         }
         else {
             await Prefixes_1.default.insert({ guildId, prefix });
-            return utils_1.Responses.embeds.Success(`Set prefix to ${prefix}`);
         }
+        return (_a = utils_1.PrivateSettings.lang) === null || _a === void 0 ? void 0 : _a.success.prefixChanged;
     },
 };
 //# sourceMappingURL=prefix.js.map

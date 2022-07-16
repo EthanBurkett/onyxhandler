@@ -1,7 +1,7 @@
 import { Guild } from "discord.js";
 import Prefix from "../entity/Prefixes";
 import { Command } from "../index.d";
-import { Cache, Responses, Settings } from "../utils";
+import { Cache, PrivateSettings, Responses, Settings } from "../utils";
 
 export default {
   description: "Change the prefix for this guild",
@@ -76,10 +76,9 @@ export default {
     Cache.prefixes.set(guildId, prefix);
     if (guildExists) {
       await Prefix.update({ guildId }, { prefix });
-      return Responses.embeds.Success(`Updated prefix to ${prefix}`);
     } else {
       await Prefix.insert({ guildId, prefix });
-      return Responses.embeds.Success(`Set prefix to ${prefix}`);
     }
+    return PrivateSettings.lang?.success.prefixChanged;
   },
 } as Command;
