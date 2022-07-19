@@ -10,42 +10,10 @@ Getting started is very quick and easy, just a simple function and 1 folder.
 
 - GraphQL Server (Local/Hosted)
 
-### Using JavaScript
-
-```js
-const Onyx = require("onyxlibrary");
-
-module.exports = Onyx({
-  client: {
-    commands: "commands",
-    token: "Your bot token",
-  },
-  postgres: {
-    dataSource: {
-      type: "postgres",
-      host: "localhost",
-      port: 5432,
-      username: "postgres",
-      password: "Your postgres user password",
-      database: "onyx",
-      synchronize: true,
-      logging: false,
-      migrations: [],
-      subscribers: [],
-    }, // This is an object you can find documented at https://typeorm.io
-    entityDir: "entity", // This is where all your postgres entities will be stored
-    resolversDir: "resolvers", // All your queries and mutations will be stored here as resolvers
-  },
-});
-```
-
-### Using Typescript
-
 ```ts
 import Onyx from "onyxlibrary";
 
 export default Onyx({
-  typescript: true,
   client: {
     commands: "commands",
     token: "Your bot token",
@@ -71,9 +39,8 @@ export default Onyx({
 
 ## All Library Options
 
-```js
+```ts
 Onyx({
-  typescript?: true | false;
   client: {
     devs?: ["user id"];
     commands: "commands";
@@ -100,25 +67,10 @@ Onyx({
 
 Creating a command is as simple as creating a new file and exporting an object
 
-### Using JavaScript
-
-`commands/ping.js`
-
-```js
-module.exports = {
-  description: "This is the ping command!",
-  run() {
-    return "Pong!";
-  },
-};
-```
-
-### Using TypeScript
-
 `commands/ping.ts`
 
-```js
-import { Command } from 'onyxlibrary';
+```ts
+import { Command } from "onyxlibrary";
 
 export default {
   description: "This is the ping command!",
@@ -130,8 +82,10 @@ export default {
 
 ### All Command Options
 
-```js
-module.exports = {
+```ts
+import { Command } from "onyxlibrary";
+
+export default {
   name: "ping",
   description: "sends back pong!",
   slash: "both",
@@ -163,7 +117,7 @@ module.exports = {
   }) {
     return new MessageEmbed().setTitle("Pong!");
   },
-};
+} as Command;
 ```
 
 ## Quality of Life Customizatios
@@ -171,25 +125,6 @@ module.exports = {
 ### Default Messages
 
 Firstly, create a new file and call it whatever you want, we're gonna use 'lang.js' in this example. When setting the messages you can use strings or embeds, or if you'd like it disabled just set it to false.
-
-### In JavaScript
-
-```js
-module.exports = {
-  errors: {
-    minArgs(minimum, expected) { return new MessageEmbed().setTitle(`You need to supply at least ${minimum} args`).setDescription(`${expected}`) },
-    maxArgs(maximum, expected) { return new MessageEmbed().setTitle(`You can only supply up to ${maximum} args`).setDescription(`${expected}`) },
-    testOnly: false
-    devOnly: "This command is for devs only",
-    noPermission(permission) { return 'No permission. Permission required '+permission }
-  },
-  success: {
-    prefixChanged(prefix) { return `Updated the prefix to ${prefix}` }
-  }
-}
-```
-
-### In TypeScript
 
 ```ts
 import { lang } from 'onyxlibrary'

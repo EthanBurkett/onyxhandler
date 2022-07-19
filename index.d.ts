@@ -56,7 +56,6 @@ export interface IErrors {
 }
 
 export interface ISettings {
-  typescript?: boolean;
   client: {
     devs?: string[];
     commands: string;

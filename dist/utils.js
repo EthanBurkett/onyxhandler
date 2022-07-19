@@ -46,7 +46,7 @@ exports.Console = {
 };
 const LoadResolvers = async () => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").resolversDir)}/**/*.${exports.Settings.get("typescript") ? "ts" : "js"}`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").resolversDir)}/**/*.ts}`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -63,7 +63,8 @@ const LoadResolvers = async () => {
 exports.LoadResolvers = LoadResolvers;
 const LoadEntities = async () => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").entityDir)}/**/*.${exports.Settings.get("typescript") ? "ts" : "js"}`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").entityDir)}/**/*.ts
+      }`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -80,7 +81,8 @@ const LoadEntities = async () => {
 exports.LoadEntities = LoadEntities;
 const LoadEvents = async (client) => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").events)}/**/*.${exports.Settings.get("typescript") ? "ts" : "js"}`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").events)}/**/*.ts
+      }`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -112,7 +114,8 @@ const LoadEvents = async (client) => {
 exports.LoadEvents = LoadEvents;
 const LoadCommands = async (client) => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").commands)}/**/*.${exports.Settings.get("typescript") ? "ts" : "js"}`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").commands)}/**/*.ts
+      }`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;

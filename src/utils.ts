@@ -71,7 +71,7 @@ export const LoadResolvers = async () => {
       `${path.join(
         process.cwd(),
         Settings.get("postgres")!.resolversDir
-      )}/**/*.${Settings.get("typescript") ? "ts" : "js"}`
+      )}/**/*.ts}`
     )
   ).map((file) => {
     let req = require(file);
@@ -93,8 +93,7 @@ export const LoadEntities = async () => {
   const files: any[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("postgres")!.entityDir)}/**/*.${
-        Settings.get("typescript") ? "ts" : "js"
+      `${path.join(process.cwd(), Settings.get("postgres")!.entityDir)}/**/*.ts
       }`
     )
   ).map((file) => {
@@ -117,8 +116,7 @@ export const LoadEvents = async (client: Client) => {
   const files: { displayName: string; event: Function }[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("client")!.events)}/**/*.${
-        Settings.get("typescript") ? "ts" : "js"
+      `${path.join(process.cwd(), Settings.get("client")!.events)}/**/*.ts
       }`
     )
   ).map((file) => {
@@ -168,8 +166,7 @@ export const LoadCommands = async (client: Client) => {
   const files: { command: Command; fileName: string[] }[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("client")!.commands)}/**/*.${
-        Settings.get("typescript") ? "ts" : "js"
+      `${path.join(process.cwd(), Settings.get("client")!.commands)}/**/*.ts
       }`
     )
   ).map((file) => {
