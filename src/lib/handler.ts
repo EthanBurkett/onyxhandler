@@ -9,7 +9,7 @@ import {
   TextBasedChannel,
   TextChannel,
 } from "discord.js";
-import { Command, IErrors, lang } from "../index.d";
+import { Command, IErrors, lang } from "../../index.d";
 import {
   Commands,
   Console,
@@ -103,7 +103,7 @@ export const CommandHandler = ({ client }: { client: Client<boolean> }) => {
       args,
       channel: message.channel as TextBasedChannel,
       guild: message.guild,
-      member: message.member,
+      member: message.member!,
       user: message.author,
       options: undefined,
     });

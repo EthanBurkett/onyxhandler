@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import chalk from "chalk";
 import { promisify } from "util";
-import { Command, lang } from "./index.d";
+import { Command, lang, DashboardSettings } from "../index.d";
 import { glob } from "glob";
 import path from "path";
 import Prefix from "./entity/Prefixes";
@@ -24,9 +24,11 @@ export const Cache = {
 export const PrivateSettings: {
   lang: lang | null;
   client: Client<boolean> | null;
+  dashboard: DashboardSettings | null;
 } = {
   client: null,
   lang: null,
+  dashboard: null,
 };
 
 export const Responses = {
@@ -48,18 +50,20 @@ export const Responses = {
   },
 };
 
-type ConsoleTypes = "bot" | "server";
+type ConsoleTypes = "bot" | "server" | "dashboard";
 export const Console = {
-  log: (type: ConsoleTypes, ...data: string[]) => {
+  log: (type: ConsoleTypes, message?: string, ...optionalParams: any[]) => {
     console.log(
       chalk.magentaBright.bold(`Onyx Library ${chalk.grey(`(${type})`)} 🢂`),
-      ...data
+      message,
+      ...optionalParams
     );
   },
-  error: (type: ConsoleTypes, ...data: string[]) => {
+  error: (type: ConsoleTypes, message?: string, ...optionalParams: any[]) => {
     console.log(
       chalk.redBright.bold(`Error ${chalk.grey(`(${type})`)} 🢂`),
-      ...data
+      message,
+      ...optionalParams
     );
   },
 };
@@ -71,7 +75,7 @@ export const LoadResolvers = async () => {
       `${path.join(
         process.cwd(),
         Settings.get("postgres")!.resolversDir
-      )}/**/*.ts}`
+      )}/**/*.ts`
     )
   ).map((file) => {
     let req = require(file);
@@ -93,8 +97,7 @@ export const LoadEntities = async () => {
   const files: any[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("postgres")!.entityDir)}/**/*.ts
-      }`
+      `${path.join(process.cwd(), Settings.get("postgres")!.entityDir)}/**/*.ts`
     )
   ).map((file) => {
     let req = require(file);
@@ -116,8 +119,7 @@ export const LoadEvents = async (client: Client) => {
   const files: { displayName: string; event: Function }[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("client")!.events)}/**/*.ts
-      }`
+      `${path.join(process.cwd(), Settings.get("client")!.events)}/**/*.ts`
     )
   ).map((file) => {
     let req = require(file);
@@ -166,8 +168,7 @@ export const LoadCommands = async (client: Client) => {
   const files: { command: Command; fileName: string[] }[] = [];
   (
     await PG(
-      `${path.join(process.cwd(), Settings.get("client")!.commands)}/**/*.ts
-      }`
+      `${path.join(process.cwd(), Settings.get("client")!.commands)}/**/*.ts`
     )
   ).map((file) => {
     let req = require(file);

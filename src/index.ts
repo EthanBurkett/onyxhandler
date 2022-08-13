@@ -1,4 +1,4 @@
-import { Onyx, ISettings, lang } from "./index.d";
+import { Onyx, ISettings, DashboardSettings } from "..";
 import {
   CachePrefixes,
   Commands,
@@ -19,8 +19,9 @@ import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-co
 import { buildSchema } from "type-graphql";
 import { DataSource } from "typeorm";
 import langFile from "./lib/lang";
-import path from "path";
 import chalk from "chalk";
+import dashboardApi from "./dashboard-api";
+import APIUserResolver from "./resolvers/APIUsers";
 
 export default function Onyx(settings: ISettings): Onyx {
   for (let Setting in settings) {
@@ -28,11 +29,13 @@ export default function Onyx(settings: ISettings): Onyx {
     Settings.set(setting, settings[setting]);
   }
 
-  const intents = [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    ...settings.client.intents!,
-  ];
+  const intents = settings.client.intents
+    ? [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        ...settings.client.intents,
+      ]
+    : [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES];
   const client: Client = new Client({
     intents,
   });
@@ -160,11 +163,16 @@ export default function Onyx(settings: ISettings): Onyx {
       });
   });
 
-  client.login(settings.client.token).catch((err) => Console.error("bot", err));
+  client
+    .login(settings.client.token)
+    .catch((err) => Console.error("bot", err.message));
 
   return {
     client: () => PrivateSettings.client!,
     commands: () => Commands,
     events: () => Events,
+    dashboard: {
+      startApi: (settings: DashboardSettings) => dashboardApi(settings),
+    },
   };
 }

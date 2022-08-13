@@ -1,6 +1,6 @@
 import { Guild } from "discord.js";
 import Prefix from "../entity/Prefixes";
-import { Command } from "../index.d";
+import { Command } from "../../index.d";
 import { Cache, PrivateSettings, Responses, Settings } from "../utils";
 
 export default {

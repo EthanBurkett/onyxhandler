@@ -13,16 +13,19 @@ const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
 const lang_1 = __importDefault(require("./lib/lang"));
 const chalk_1 = __importDefault(require("chalk"));
+const dashboard_api_1 = __importDefault(require("./dashboard-api"));
 function Onyx(settings) {
     for (let Setting in settings) {
         const setting = Setting;
         utils_1.Settings.set(setting, settings[setting]);
     }
-    const intents = [
-        discord_js_1.Intents.FLAGS.GUILDS,
-        discord_js_1.Intents.FLAGS.GUILD_MESSAGES,
-        ...settings.client.intents,
-    ];
+    const intents = settings.client.intents
+        ? [
+            discord_js_1.Intents.FLAGS.GUILDS,
+            discord_js_1.Intents.FLAGS.GUILD_MESSAGES,
+            ...settings.client.intents,
+        ]
+        : [discord_js_1.Intents.FLAGS.GUILDS, discord_js_1.Intents.FLAGS.GUILD_MESSAGES];
     const client = new discord_js_1.Client({
         intents,
     });
@@ -103,11 +106,16 @@ function Onyx(settings) {
                     : ""}`);
             });
     });
-    client.login(settings.client.token).catch((err) => utils_1.Console.error("bot", err));
+    client
+        .login(settings.client.token)
+        .catch((err) => utils_1.Console.error("bot", err.message));
     return {
         client: () => utils_1.PrivateSettings.client,
         commands: () => utils_1.Commands,
         events: () => utils_1.Events,
+        dashboard: {
+            startApi: (settings) => (0, dashboard_api_1.default)(settings),
+        },
     };
 }
 exports.default = Onyx;

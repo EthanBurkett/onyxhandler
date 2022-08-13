@@ -27,10 +27,12 @@ import {
   Interaction,
   ApplicationCommandOptionData,
   CommandInteraction,
+  APIInteractionGuildMember,
   CacheType,
   CommandInteractionOption,
   CommandInteractionOptionResolver,
 } from "discord.js";
+import { Pool } from "pg";
 
 export default function Onyx(opts: ISettings);
 
@@ -38,6 +40,9 @@ export interface Onyx {
   client: () => Client;
   commands: () => Collection<string, Command>;
   events: () => Collection<string, Function>;
+  dashboard: {
+    startApi: (settings: DashboardSettings) => Promise<void>;
+  };
 }
 
 export interface lang {
@@ -53,6 +58,19 @@ export interface IErrors {
   testOnly?: string | MessageEmbed | false;
   devOnly?: string | MessageEmbed | false;
   noPermission?(permission: string): string | MessageEmbed | false;
+}
+
+export interface APIUser {}
+
+export interface DashboardSettings {
+  apiport: number;
+  pgPool: Pool;
+  token: string;
+  clientUri?: string;
+  apiUri?: string;
+  clientID: string;
+  clientSecret: string;
+  callbackURL: string;
 }
 
 export interface ISettings {
@@ -123,5 +141,5 @@ export interface ICallbackOptions {
     | ThreadChannel
     | null
     | TextBasedChannel;
-  member: GuildMember;
+  member: GuildMember | APIInteractionGuildMember;
 }

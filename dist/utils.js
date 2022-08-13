@@ -21,6 +21,7 @@ exports.Cache = {
 exports.PrivateSettings = {
     client: null,
     lang: null,
+    dashboard: null,
 };
 exports.Responses = {
     embeds: {
@@ -37,16 +38,16 @@ exports.Responses = {
     },
 };
 exports.Console = {
-    log: (type, ...data) => {
-        console.log(chalk_1.default.magentaBright.bold(`Onyx Library ${chalk_1.default.grey(`(${type})`)} 🢂`), ...data);
+    log: (type, message, ...optionalParams) => {
+        console.log(chalk_1.default.magentaBright.bold(`Onyx Library ${chalk_1.default.grey(`(${type})`)} 🢂`), message, ...optionalParams);
     },
-    error: (type, ...data) => {
-        console.log(chalk_1.default.redBright.bold(`Error ${chalk_1.default.grey(`(${type})`)} 🢂`), ...data);
+    error: (type, message, ...optionalParams) => {
+        console.log(chalk_1.default.redBright.bold(`Error ${chalk_1.default.grey(`(${type})`)} 🢂`), message, ...optionalParams);
     },
 };
 const LoadResolvers = async () => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").resolversDir)}/**/*.ts}`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").resolversDir)}/**/*.ts`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -63,8 +64,7 @@ const LoadResolvers = async () => {
 exports.LoadResolvers = LoadResolvers;
 const LoadEntities = async () => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").entityDir)}/**/*.ts
-      }`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("postgres").entityDir)}/**/*.ts`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -81,8 +81,7 @@ const LoadEntities = async () => {
 exports.LoadEntities = LoadEntities;
 const LoadEvents = async (client) => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").events)}/**/*.ts
-      }`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").events)}/**/*.ts`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;
@@ -114,8 +113,7 @@ const LoadEvents = async (client) => {
 exports.LoadEvents = LoadEvents;
 const LoadCommands = async (client) => {
     const files = [];
-    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").commands)}/**/*.ts
-      }`)).map((file) => {
+    (await PG(`${path_1.default.join(process.cwd(), exports.Settings.get("client").commands)}/**/*.ts`)).map((file) => {
         let req = require(file);
         if (req.default)
             req = require(file).default;

@@ -1,5 +1,5 @@
 import { Responses } from "../utils";
-import { lang } from "../index.d";
+import { lang } from "../../index.d";
 
 export default {
   errors: {
