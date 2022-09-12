@@ -1,6 +1,6 @@
 {
   "name": "onyxlibrary",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Onyx Library is an amazing discord handler that comes with GraphQL support and an integrated playground for queries",
   "type": "commonjs",
   "main": "./dist/index.js",
