@@ -84,6 +84,12 @@ function Onyx(settings) {
                 }
             });
         }
+        if (settings.client.events)
+            await (0, utils_1.LoadEvents)(client).then(async () => {
+                utils_1.Console.log("bot", `Loaded ${utils_1.Events.size} event(s) ${utils_1.Events.size === 0
+                    ? chalk_1.default.grey(`Tip: You can remove the "events" property to hide this since there are no events.`)
+                    : ""}`);
+            });
         await (0, utils_1.LoadCommands)(client).then(async () => {
             utils_1.Console.log("bot", `Loaded ${utils_1.Commands.filter((cmd) => !cmd.default).size} command(s)${utils_1.Commands.filter((cmd) => {
                 var _a;
@@ -99,12 +105,6 @@ function Onyx(settings) {
                 client,
             });
         });
-        if (settings.client.events)
-            await (0, utils_1.LoadEvents)(client).then(async () => {
-                utils_1.Console.log("bot", `Loaded ${utils_1.Events.size} event(s) ${utils_1.Events.size === 0
-                    ? chalk_1.default.grey(`Tip: You can remove the "events" property to hide this since there are no events.`)
-                    : ""}`);
-            });
     });
     client
         .login(settings.client.token)

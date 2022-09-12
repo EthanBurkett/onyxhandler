@@ -73,10 +73,30 @@ export interface DashboardSettings {
   callbackURL: string;
 }
 
+export interface IMiddleware {
+  client: Client;
+  channelId: string;
+  guild: Guild;
+  guildId: string;
+  command: Command;
+  channel:
+    | DMChannel
+    | PartialDMChannel
+    | NewsChannel
+    | TextChannel
+    | ThreadChannel
+    | null
+    | TextBasedChannel;
+  member: GuildMember | APIInteractionGuildMember;
+  message: Message<boolean> | null;
+  interaction: CommandInteraction<CacheType> | null;
+}
+
 export interface ISettings {
   client: {
     devs?: string[];
     commands: string;
+    commandMiddleware?: ({}: IMiddleware) => Promise<boolean>;
     token: string;
     events?: string;
     intents?: number[];
@@ -143,3 +163,5 @@ export interface ICallbackOptions {
     | TextBasedChannel;
   member: GuildMember | APIInteractionGuildMember;
 }
+
+export type Events = "Command.Legacy" | "Command.Slash" | "Command" | "Ready";

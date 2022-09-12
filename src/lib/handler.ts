@@ -3,13 +3,14 @@ import {
   Client,
   CommandInteraction,
   CommandInteractionOption,
+  Guild,
   GuildMember,
   Message,
   MessageEmbed,
   TextBasedChannel,
   TextChannel,
 } from "discord.js";
-import { Command, IErrors, lang } from "../../index.d";
+import { Command, Events, IErrors, lang, IMiddleware } from "../../index.d";
 import {
   Commands,
   Console,
@@ -46,6 +47,9 @@ export const CommandHandler = ({ client }: { client: Client<boolean> }) => {
       });
       return;
     }
+
+    client.emit<Events>("Command.Legacy", message, command);
+    client.emit<Events>("Command", message, command);
 
     args = args.slice(1);
 
@@ -96,20 +100,38 @@ export const CommandHandler = ({ client }: { client: Client<boolean> }) => {
       }
     }
 
-    let result = command.run({
-      message,
-      client,
-      interaction: null,
-      args,
-      channel: message.channel as TextBasedChannel,
-      guild: message.guild,
-      member: message.member!,
-      user: message.author,
-      options: undefined,
-    });
-    if (result instanceof Promise) result = await result;
+    const Middleware = Settings.get("client").commandMiddleware
+      ? await Settings.get("client").commandMiddleware({
+          client,
+          channel: message.channel as TextBasedChannel,
+          channelId: message.channel.id,
+          guild: message.guild as Guild,
+          guildId: message.guild.id,
+          member: message.member as GuildMember,
+          command: command as Command,
+          interaction: null,
+          message,
+        } as IMiddleware)
+      : true;
 
-    replyFromCallback(message, result);
+    if (Middleware === true) {
+      let result = command.run({
+        message,
+        client,
+        interaction: null,
+        args,
+        channel: message.channel as TextBasedChannel,
+        guild: message.guild,
+        member: message.member!,
+        user: message.author,
+        options: undefined,
+      });
+      if (result instanceof Promise) result = await result;
+
+      replyFromCallback(message, result);
+    } else {
+      return Middleware;
+    }
   });
 
   client.on("interactionCreate", async (interaction) => {
@@ -127,6 +149,9 @@ export const CommandHandler = ({ client }: { client: Client<boolean> }) => {
         embeds: [Responses.embeds.Error("This command is slash disabled.")],
       });
     }
+
+    client.emit<Events>("Command.Slash", interaction, command);
+    client.emit<Events>("Command", interaction, command);
 
     const generalTestResult = generalTests(command, interaction, Errors);
     if (typeof generalTestResult === "object") {
@@ -155,21 +180,39 @@ export const CommandHandler = ({ client }: { client: Client<boolean> }) => {
       }
     }
 
-    let response = command.run({
-      message: null,
-      client,
-      interaction,
-      args: [],
-      channel: interaction.channel as TextBasedChannel,
-      guild: interaction.guild,
-      member: interaction.member,
-      user: interaction.user,
-      options: interaction.options,
-    });
+    const Middleware = Settings.get("client").commandMiddleware
+      ? await Settings.get("client").commandMiddleware({
+          client,
+          channel: interaction.channel as TextBasedChannel,
+          channelId: interaction.channelId,
+          guild: interaction.guild as Guild,
+          guildId: interaction.guild.id,
+          member: interaction.member as GuildMember,
+          command: command as Command,
+          interaction: interaction,
+          message: null,
+        } as IMiddleware)
+      : true;
 
-    if (response instanceof Promise) response = await response;
+    if (Middleware === true) {
+      let response = command.run({
+        message: null,
+        client,
+        interaction,
+        args: [],
+        channel: interaction.channel as TextBasedChannel,
+        guild: interaction.guild,
+        member: interaction.member,
+        user: interaction.user,
+        options: interaction.options,
+      });
 
-    replyFromCallback(interaction, response);
+      if (response instanceof Promise) response = await response;
+
+      replyFromCallback(interaction, response);
+    } else {
+      return Middleware;
+    }
   });
 };
 

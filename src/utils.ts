@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import chalk from "chalk";
 import { promisify } from "util";
-import { Command, lang, DashboardSettings } from "../index.d";
+import { Command, lang, DashboardSettings, Events as _Events } from "../index.d";
 import { glob } from "glob";
 import path from "path";
 import Prefix from "./entity/Prefixes";
@@ -116,7 +116,7 @@ export const LoadEntities = async () => {
 };
 
 export const LoadEvents = async (client: Client) => {
-  const files: { displayName: string; event: Function }[] = [];
+  const files: { displayName: string; event: any }[] = [];
   (
     await PG(
       `${path.join(process.cwd(), Settings.get("client")!.events)}/**/*.ts`
@@ -158,9 +158,10 @@ export const LoadEvents = async (client: Client) => {
   });
 
   files.map(({ event }) => {
-    event(client);
+    event.run(client);
   });
 
+  client.emit<_Events>("Ready")
   return files;
 };
 

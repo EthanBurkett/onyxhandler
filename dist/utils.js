@@ -106,8 +106,9 @@ const LoadEvents = async (client) => {
         exports.Events.set(displayName, req);
     });
     files.map(({ event }) => {
-        event(client);
+        event.run(client);
     });
+    client.emit("Ready");
     return files;
 };
 exports.LoadEvents = LoadEvents;

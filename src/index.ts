@@ -1,4 +1,4 @@
-import { Onyx, ISettings, DashboardSettings } from "..";
+import { Onyx, ISettings, DashboardSettings, Events as _Events } from "..";
 import {
   CachePrefixes,
   Commands,
@@ -118,6 +118,19 @@ export default function Onyx(settings: ISettings): Onyx {
         }
       });
     }
+    if (settings.client.events)
+      await LoadEvents(client).then(async () => {
+        Console.log(
+          "bot",
+          `Loaded ${Events.size} event(s) ${
+            Events.size === 0
+              ? chalk.grey(
+                  `Tip: You can remove the "events" property to hide this since there are no events.`
+                )
+              : ""
+          }`
+        );
+      });
     await LoadCommands(client).then(async () => {
       Console.log(
         "bot",
@@ -148,19 +161,6 @@ export default function Onyx(settings: ISettings): Onyx {
         client,
       });
     });
-    if (settings.client.events)
-      await LoadEvents(client).then(async () => {
-        Console.log(
-          "bot",
-          `Loaded ${Events.size} event(s) ${
-            Events.size === 0
-              ? chalk.grey(
-                  `Tip: You can remove the "events" property to hide this since there are no events.`
-                )
-              : ""
-          }`
-        );
-      });
   });
 
   client

@@ -63,6 +63,60 @@ Onyx({
 })
 ```
 
+## Command Middleware
+
+With the latest update you can now have a function run when a user executes commands but run your desired function before the actual command executes, leading to more advanced features like channel only commands
+
+`index.ts`
+
+```ts
+import Onyx from "onyxlibrary";
+import middleware from "./middleware";
+
+Onyx({
+  client: {
+    commands: "src/commands",
+    token: config.BOT_TOKEN,
+    commandMiddleware: async (obj) => await middleware(obj),
+  },
+  postgres: {
+    dataSource,
+    entityDir: "src/entity",
+    resolversDir: "src/resolvers",
+  },
+});
+```
+
+`middleware/index.ts`
+
+```ts
+import { IMiddleware } from "onyxlibrary";
+
+export default async ({
+  guildId,
+  channelId,
+  guild,
+  channel,
+  client,
+  member,
+  command,
+  message,
+  interaction,
+}: IMiddleware): Promise<boolean> => {
+  if (command.name == "cancelme") return false; // Returning false anywhere will make the command not run
+  if (command.name == "cancelandreply") {
+    // You can also reply to a message or interaction before cancelling the commmand
+    if (message) message.reply("Legacy command cancelled");
+    else interaction.reply("Slash command cancelled");
+
+    return false;
+  }
+
+  // If your middleware is set up with any statements to return false. ALWAYS make sure to return true at the bottom
+  return true;
+};
+```
+
 ## Creating a command
 
 Creating a command is as simple as creating a new file and exporting an object
@@ -118,6 +172,58 @@ export default {
     return new MessageEmbed().setTitle("Pong!");
   },
 } as Command;
+```
+
+## Making events
+
+Making events is simple, just create one file and add your `client.on` handlers! Make sure you set your events directory in your Onyx initialize function!
+There are also custom events for when a user runs an all around command, a legacy command, or a slash command!
+
+`events/general.ts`
+
+```ts
+import { Client, Message } from "discord.js";
+import { Events } from "onyxlibrary";
+
+export const run = (client: Client<boolean>) => {
+  client.on("message", (message) => {
+    console.log(message.content);
+  });
+
+  client.on<Events>(
+    "Command",
+    ({
+      // Works for slash and legacy commands
+      message,
+      interaction,
+      command,
+    }) => {
+      // do stuff
+    }
+  );
+
+  client.on<Events>(
+    "Command.Legacy",
+    ({
+      // Only runs when a legacy command is used
+      message,
+      command,
+    }) => {
+      // do stuff
+    }
+  );
+
+  client.on<Events>(
+    "Command.Slash",
+    ({
+      // Only runs when a slash command is used
+      interaction,
+      command,
+    }) => {
+      // do stuff
+    }
+  );
+};
 ```
 
 ## Quality of Life Customizatios

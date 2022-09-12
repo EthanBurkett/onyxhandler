@@ -28,6 +28,8 @@ const CommandHandler = ({ client }) => {
             });
             return;
         }
+        client.emit("Command.Legacy", message, command);
+        client.emit("Command", message, command);
         args = args.slice(1);
         const generalTestResult = generalTests(command, message, Errors);
         if (generalTestResult != undefined) {
@@ -81,20 +83,38 @@ const CommandHandler = ({ client }) => {
                 return;
             }
         }
-        let result = command.run({
-            message,
-            client,
-            interaction: null,
-            args,
-            channel: message.channel,
-            guild: message.guild,
-            member: message.member,
-            user: message.author,
-            options: undefined,
-        });
-        if (result instanceof Promise)
-            result = await result;
-        replyFromCallback(message, result);
+        const Middleware = utils_1.Settings.get("client").commandMiddleware
+            ? await utils_1.Settings.get("client").commandMiddleware({
+                client,
+                channel: message.channel,
+                channelId: message.channel.id,
+                guild: message.guild,
+                guildId: message.guild.id,
+                member: message.member,
+                command: command,
+                interaction: null,
+                message,
+            })
+            : true;
+        if (Middleware === true) {
+            let result = command.run({
+                message,
+                client,
+                interaction: null,
+                args,
+                channel: message.channel,
+                guild: message.guild,
+                member: message.member,
+                user: message.author,
+                options: undefined,
+            });
+            if (result instanceof Promise)
+                result = await result;
+            replyFromCallback(message, result);
+        }
+        else {
+            return Middleware;
+        }
     });
     client.on("interactionCreate", async (interaction) => {
         var _a;
@@ -112,6 +132,8 @@ const CommandHandler = ({ client }) => {
                 embeds: [utils_1.Responses.embeds.Error("This command is slash disabled.")],
             });
         }
+        client.emit("Command.Slash", interaction, command);
+        client.emit("Command", interaction, command);
         const generalTestResult = generalTests(command, interaction, Errors);
         if (typeof generalTestResult === "object") {
             const [Message, Args] = [
@@ -142,20 +164,38 @@ const CommandHandler = ({ client }) => {
                 interaction.reply(useResponse(res));
             }
         }
-        let response = command.run({
-            message: null,
-            client,
-            interaction,
-            args: [],
-            channel: interaction.channel,
-            guild: interaction.guild,
-            member: interaction.member,
-            user: interaction.user,
-            options: interaction.options,
-        });
-        if (response instanceof Promise)
-            response = await response;
-        replyFromCallback(interaction, response);
+        const Middleware = utils_1.Settings.get("client").commandMiddleware
+            ? await utils_1.Settings.get("client").commandMiddleware({
+                client,
+                channel: interaction.channel,
+                channelId: interaction.channelId,
+                guild: interaction.guild,
+                guildId: interaction.guild.id,
+                member: interaction.member,
+                command: command,
+                interaction: interaction,
+                message: null,
+            })
+            : true;
+        if (Middleware === true) {
+            let response = command.run({
+                message: null,
+                client,
+                interaction,
+                args: [],
+                channel: interaction.channel,
+                guild: interaction.guild,
+                member: interaction.member,
+                user: interaction.user,
+                options: interaction.options,
+            });
+            if (response instanceof Promise)
+                response = await response;
+            replyFromCallback(interaction, response);
+        }
+        else {
+            return Middleware;
+        }
     });
 };
 exports.CommandHandler = CommandHandler;
